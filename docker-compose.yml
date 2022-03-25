@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+  bot:
+    build: ./docker
+    volumes:
+      - ./assets:/home/node/app/assets
+      - ./:/home/node/app
+    environment:
+      BOT_TOKEN: 'OTU2OTY5NDY1MjQzODk3ODY3.Yj39RA.1ZjwQOF4HY_P_lVNJQkGjwfJg4k'
+      BOT_ID: 'prouteur'
