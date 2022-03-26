@@ -74,7 +74,7 @@ async function joinAndFart(voiceChannel: VoiceChannel) {
         })
     }, time)
     time = Math.floor(Math.random() * (FIFTEEN_MINUTES - 1 + 1) + 1)
-    delay(time)
+    await delay(time)
     joinAndFart(voiceChannel)
 }
 
