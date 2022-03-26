@@ -34,6 +34,8 @@ function getRandomFile(): string {
     return `assets/${FILES[Math.floor(Math.random() * len)]}`
 }
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
 async function joinAndFart(voiceChannel: VoiceChannel) {
     status.running = true
     let time = Math.floor(Math.random() * (FIFTEEN_MINUTES - 1 + 1) + 1)
@@ -60,11 +62,14 @@ async function joinAndFart(voiceChannel: VoiceChannel) {
 
             const subscriber = conn.subscribe(player)
             if (subscriber) {
-                setTimeout(() => subscriber.unsubscribe(), (duration + 1.5) * 1000)
-                conn.disconnect()
-                status.lastJoined = Date.now().valueOf()
-                status.channel = undefined
-                status.running = false
+                setTimeout(async () => {
+                    status.lastJoined = Date.now().valueOf()
+                    status.channel = undefined
+                    status.running = false
+                    subscriber.unsubscribe()
+                    delay((duration + 2) * 1000)
+                    conn.disconnect()
+                }, (duration + 1.5) * 1000)
             }
         })
     }, time)
