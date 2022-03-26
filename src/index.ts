@@ -34,9 +34,9 @@ function getRandomFile(): string {
     return `assets/${FILES[Math.floor(Math.random() * len)]}`
 }
 
-async function joinAndFart(client: Client, voiceChannel: VoiceChannel) {
+async function joinAndFart(voiceChannel: VoiceChannel) {
     status.running = true
-    let time = Math.floor(Math.random() * ONE_HOUR)
+    let time = Math.floor(Math.random() * ONE_HOUR) / 60
 
     while (time + status.lastJoined > Date.now().valueOf() + (ONE_HOUR / 4)) {
         time = Math.floor(Math.random() * ONE_HOUR)
