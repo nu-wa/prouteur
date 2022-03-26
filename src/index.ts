@@ -17,7 +17,7 @@ let status: Status = {
     channel: undefined
 }
 
-const ONE_HOUR = 3_600_000
+const FIFTEEN_MINUTES = 900_000
 const player = createAudioPlayer({
     behaviors: {
         noSubscriber: NoSubscriberBehavior.Pause
@@ -36,10 +36,10 @@ function getRandomFile(): string {
 
 async function joinAndFart(voiceChannel: VoiceChannel) {
     status.running = true
-    let time = Math.floor(Math.random() * ONE_HOUR) / 60
+    let time = Math.floor(Math.random() * (FIFTEEN_MINUTES - 1 + 1) + 1)
 
-    while (time + status.lastJoined > Date.now().valueOf() + (ONE_HOUR / 4)) {
-        time = Math.floor(Math.random() * ONE_HOUR)
+    while (time + status.lastJoined > Date.now().valueOf() + (FIFTEEN_MINUTES / 4)) {
+        time = Math.floor(Math.random() * (FIFTEEN_MINUTES - 1 + 1) + 1)
     }
 
     console.log(`Should join in ${time / 1000 / 60}s`)
@@ -60,13 +60,13 @@ async function joinAndFart(voiceChannel: VoiceChannel) {
 
             const subscriber = conn.subscribe(player)
             if (subscriber) {
-                setTimeout(() => subscriber.unsubscribe(), duration + 1.5 * 1000)
+                setTimeout(() => subscriber.unsubscribe(), (duration + 1.5) * 1000)
                 conn.disconnect()
+                status.lastJoined = Date.now().valueOf()
+                status.channel = undefined
+                status.running = false
             }
         })
-        status.lastJoined = Date.now().valueOf()
-        status.channel = undefined
-        status.running = false
     }, time)
 }
 
