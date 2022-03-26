@@ -74,8 +74,7 @@ async function joinAndFart(voiceChannel: VoiceChannel) {
 class Fart {
     @On("voiceStateUpdate")
     private onJoinVoice(
-        [_, newState]: ArgsOf<"voiceStateUpdate">,
-        client: Client
+        [_, newState]: ArgsOf<"voiceStateUpdate">
     ) {
         const channel = newState.channel
 
@@ -92,7 +91,7 @@ class Fart {
         if (status.running) return
 
         if (channel.members.size > 0 && status.channel !== channel) {
-            joinAndFart(client, channel)
+            joinAndFart(channel)
         }
     }
 }
