@@ -40,7 +40,7 @@ async function joinAndFart(voiceChannel: VoiceChannel) {
     status.running = true
     let time = Math.floor(Math.random() * (FIFTEEN_MINUTES - 1 + 1) + 1)
 
-    while (time + status.lastJoined > Date.now().valueOf() + (FIFTEEN_MINUTES / 4)) {
+    while (time + status.lastJoined > Date.now().valueOf() + FIFTEEN_MINUTES) {
         time = Math.floor(Math.random() * (FIFTEEN_MINUTES - 1 + 1) + 1)
     }
 
@@ -73,6 +73,9 @@ async function joinAndFart(voiceChannel: VoiceChannel) {
             }
         })
     }, time)
+    time = Math.floor(Math.random() * (FIFTEEN_MINUTES - 1 + 1) + 1)
+    delay(time)
+    joinAndFart(voiceChannel)
 }
 
 @Discord()
