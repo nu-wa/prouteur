@@ -31,7 +31,7 @@ function getRandomFile(): string {
 
     if (len === 0) throw "assets empty ig"
 
-    return FILES[Math.floor(Math.random() * len)]
+    return `assets/${FILES[Math.floor(Math.random() * len)]}`
 }
 
 async function joinAndFart(client: Client, voiceChannel: VoiceChannel) {
@@ -41,6 +41,8 @@ async function joinAndFart(client: Client, voiceChannel: VoiceChannel) {
     while (time + status.lastJoined > Date.now().valueOf() + (ONE_HOUR / 4)) {
         time = Math.floor(Math.random() * ONE_HOUR)
     }
+
+    console.log(`Should join in ${time / 1000 / 60}s`)
 
     setTimeout(() => {
         const conn = joinVoiceChannel({
@@ -59,6 +61,7 @@ async function joinAndFart(client: Client, voiceChannel: VoiceChannel) {
             const subscriber = conn.subscribe(player)
             if (subscriber) {
                 setTimeout(() => subscriber.unsubscribe(), duration + 1.5 * 1000)
+                conn.disconnect()
             }
         })
         status.lastJoined = Date.now().valueOf()

@@ -2,8 +2,10 @@ FROM 'node:lts-alpine'
 
 RUN apk add --update --no-cache ffmpeg
 
+COPY "./entrypoint.sh" "/home/node"
+
 USER node
 
 WORKDIR /home/node/app
 
-CMD [ "npm", "run", "start" ]
+ENTRYPOINT [ "/home/node/entrypoint.sh" ]
