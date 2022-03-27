@@ -1,9 +1,9 @@
-import 'reflect-metadata'
 import * as fs from 'fs'
+import 'reflect-metadata'
 import { Intents, VoiceChannel } from 'discord.js'
 import { ArgsOf, Client, Discord, On } from 'discordx'
-import { createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnectionStatus } from '@discordjs/voice'
 import { getAudioDurationInSeconds } from 'get-audio-duration'
+import { createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnectionStatus } from '@discordjs/voice'
 
 type Status = {
     running: boolean,
@@ -17,14 +17,18 @@ let status: Status = {
     channel: undefined
 }
 
-const FIFTEEN_MINUTES = 900_000
+const MAX_TIME = 1_800_000
+const MIN_TIME = 300_000
+let FILES: string[] = []
+
 const player = createAudioPlayer({
     behaviors: {
         noSubscriber: NoSubscriberBehavior.Pause
     }
 })
 
-let FILES: string[] = []
+const getRandomTime = () => Math.floor(Math.random() * (MAX_TIME - MIN_TIME + MIN_TIME) + MIN_TIME)
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 function getRandomFile(): string {
     const len = FILES.length
@@ -34,17 +38,13 @@ function getRandomFile(): string {
     return `assets/${FILES[Math.floor(Math.random() * len)]}`
 }
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-
 async function joinAndFart(voiceChannel: VoiceChannel) {
     status.running = true
-    let time = Math.floor(Math.random() * (FIFTEEN_MINUTES - 1 + 1) + 1)
+    let time = getRandomTime()
 
-    while (time + status.lastJoined > Date.now().valueOf() + FIFTEEN_MINUTES) {
-        time = Math.floor(Math.random() * (FIFTEEN_MINUTES - 1 + 1) + 1)
+    while (time + status.lastJoined > Date.now().valueOf() + MAX_TIME) {
+        time = getRandomTime()
     }
-
-    console.log(`Should join in ${time / 1000 / 60}s`)
 
     setTimeout(() => {
         const conn = joinVoiceChannel({
@@ -73,9 +73,26 @@ async function joinAndFart(voiceChannel: VoiceChannel) {
             }
         })
     }, time)
-    time = Math.floor(Math.random() * (FIFTEEN_MINUTES - 1 + 1) + 1)
+    time = getRandomTime()
     await delay(time)
     joinAndFart(voiceChannel)
+}
+
+function checkChannel(channel: VoiceChannel) {
+    if (!channel.joinable) return
+
+    if (channel.members.size === 0) {
+        status.running = false
+        status.lastJoined = 0
+        status.channel = undefined
+        return
+    }
+
+    if (status.running) return
+
+    if (channel.members.size > 0 && status.channel !== channel) {
+        joinAndFart(channel)
+    }
 }
 
 @Discord()
@@ -87,20 +104,7 @@ class Fart {
         const channel = newState.channel
 
         if (!(channel instanceof VoiceChannel)) return
-        if (!channel.joinable) return
-
-        if (channel.members.size === 0) {
-            status.running = false
-            status.lastJoined = 0
-            status.channel = undefined
-            return
-        }
-
-        if (status.running) return
-
-        if (channel.members.size > 0 && status.channel !== channel) {
-            joinAndFart(channel)
-        }
+        checkChannel(channel)
     }
 }
 
