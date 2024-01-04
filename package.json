@@ -9,7 +9,7 @@
     "discord.js": "^13.6.0",
     "discordx": "^9.4.2",
     "get-audio-duration": "^3.0.1",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "^0.2.0",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
